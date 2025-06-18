@@ -31,6 +31,7 @@ jobs:
     - name: Build Docker image
       run: |
         IMAGE_TAG=${{ github.sha }}
+	DOCKER_USER=$(echo "${{ secrets.DOCKERHUB_USERNAME }}" | tr '[:upper:]' '[:lower:]')
         docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/fruits-api:${IMAGE_TAG} \
                      -t ${{ secrets.DOCKERHUB_USERNAME }}/fruits-api:latest .
 
@@ -43,8 +44,55 @@ jobs:
     - name: Push Docker image
       run: |
         IMAGE_TAG=${{ github.sha }}
+	DOCKER_USER=$(echo "${{ secrets.DOCKERHUB_USERNAME }}" | tr '[:upper:]' '[:lower:]')
         docker push ${{ secrets.DOCKERHUB_USERNAME }}/fruits-api:${IMAGE_TAG}
         docker push ${{ secrets.DOCKERHUB_USERNAME }}/fruits-api:latest
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

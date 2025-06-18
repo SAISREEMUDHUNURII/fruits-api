@@ -14,9 +14,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Set lowercase DockerHub username
+      run: echo "DOCKER_USER=$(echo '${{ secrets.DOCKERHUB_USERNAME }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+
     - name: Pull Docker Image
       run: |
-        docker pull ${{ secrets.DOCKERHUB_USERNAME }}/fruits-api:latest
+        docker pull ${DOCKER_USER}/fruits-api:latest
 
     - name: Stop existing container (if running)
       run: |
@@ -26,7 +29,36 @@ jobs:
     - name: Run Docker Container on Port 8000
       run: |
         docker run -d --name fruits-api -p 8000:8000 \
-          ${{ secrets.DOCKERHUB_USERNAME }}/fruits-api:latest
+          ${DOCKER_USER}/fruits-api:latest
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
