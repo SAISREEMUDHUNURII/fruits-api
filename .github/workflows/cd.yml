@@ -27,3 +27,35 @@ jobs:
       run: |
         docker run -d --name fruits-api -p 8000:8000 \
           ${{ secrets.DOCKERHUB_USERNAME }}/fruits-api:latest
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
