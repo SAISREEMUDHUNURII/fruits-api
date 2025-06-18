@@ -28,6 +28,12 @@ jobs:
           export TESTING=1
           pytest
 
+      - name: Debug DockerHub username (optional)
+        run: |
+          echo "DOCKERHUB_USERNAME from secret: '${{ secrets.DOCKERHUB_USERNAME }}'"
+          DOCKER_USER=$(echo "${{ secrets.DOCKERHUB_USERNAME }}" | tr '[:upper:]' '[:lower:]')
+          echo "Lowercased DockerHub username: $DOCKER_USER"
+
       - name: Build Docker image
         run: |
           IMAGE_TAG=${GITHUB_SHA}
