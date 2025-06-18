@@ -30,7 +30,7 @@ jobs:
 
       - name: Run Docker container (detached mode)
         run: |
-          set -e  # fail pipeline if docker run fails
+          set -e
           docker run -d --name fruits-api -p 8000:8000 \
             ${{ secrets.DOCKERHUB_USERNAME }}/fruits-api:latest
 
