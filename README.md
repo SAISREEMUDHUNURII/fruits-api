@@ -74,7 +74,7 @@ If you're deploying to a cloud server:
 http://<YOUR_PUBLIC_IP>:8000/fruits
 ```
 
----
+
 
 ## ✅ Done!
 
