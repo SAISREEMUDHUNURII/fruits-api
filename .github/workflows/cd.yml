@@ -5,8 +5,6 @@ on:
     workflows: ["CI"]
     types:
       - completed
-    branches:
-      - master
 
 jobs:
   deploy:
@@ -21,7 +19,8 @@ jobs:
         run: docker pull ${{ secrets.DOCKERHUB_USERNAME }}/fruits-api:latest
 
       - name: Show Docker images (sanity check)
-        run: docker images | grep fruits-api || echo "No image found"
+        run: |
+          docker images | grep fruits-api || echo "No image found"
 
       - name: Stop & remove any existing container
         run: |
@@ -31,8 +30,7 @@ jobs:
       - name: Run Docker container (detached mode)
         run: |
           set -e
-          docker run -d --name fruits-api -p 8000:8000 \
-            ${{ secrets.DOCKERHUB_USERNAME }}/fruits-api:latest
+          docker run -d --name fruits-api -p 8000:8000 ${{ secrets.DOCKERHUB_USERNAME }}/fruits-api:latest
 
       - name: Show running containers (confirm success)
         run: docker ps | grep fruits-api || echo "❌ Container did not start"
