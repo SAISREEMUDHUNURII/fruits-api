@@ -9,48 +9,39 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.10'
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
 
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
 
-      - name: Run tests
-        run: |
-          export PYTHONPATH="${{ github.workspace }}"
-          export TESTING=1
-          pytest
+    - name: Run tests
+      run: |
+        export PYTHONPATH="${{ github.workspace }}"
+        export TESTING=1
+        pytest
 
-      - name: Debug DockerHub username (optional)
-        run: |
-          echo "DOCKERHUB_USERNAME from secret: '${{ secrets.DOCKERHUB_USERNAME }}'"
-          DOCKER_USER=$(echo "${{ secrets.DOCKERHUB_USERNAME }}" | tr '[:upper:]' '[:lower:]')
-          echo "Lowercased DockerHub username: $DOCKER_USER"
+    - name: Build Docker image
+      run: |
+        IMAGE_TAG=${{ github.sha }}
+        docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/fruits-api:${IMAGE_TAG} \
+                     -t ${{ secrets.DOCKERHUB_USERNAME }}/fruits-api:latest .
 
-      - name: Build Docker image
-        run: |
-          IMAGE_TAG=${GITHUB_SHA}
-          DOCKER_USER=$(echo "${{ secrets.DOCKERHUB_USERNAME }}" | tr '[:upper:]' '[:lower:]')
-          docker build -t $DOCKER_USER/fruits-api:${IMAGE_TAG} \
-                       -t $DOCKER_USER/fruits-api:latest .
+    - name: Login to DockerHub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Login to DockerHub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Push Docker image
-        run: |
-          IMAGE_TAG=${GITHUB_SHA}
-          DOCKER_USER=$(echo "${{ secrets.DOCKERHUB_USERNAME }}" | tr '[:upper:]' '[:lower:]')
-          docker push $DOCKER_USER/fruits-api:${IMAGE_TAG}
-          docker push $DOCKER_USER/fruits-api:latest
-
+    - name: Push Docker image
+      run: |
+        IMAGE_TAG=${{ github.sha }}
+        docker push ${{ secrets.DOCKERHUB_USERNAME }}/fruits-api:${IMAGE_TAG}
+        docker push ${{ secrets.DOCKERHUB_USERNAME }}/fruits-api:latest
