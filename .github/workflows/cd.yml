@@ -14,16 +14,26 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Pull Docker Image
-      run: |
-        docker pull ${{ secrets.DOCKERHUB_USERNAME }}/fruits-api:latest
+      - name: Print DockerHub image reference
+        run: echo "Using image: ${{ secrets.DOCKERHUB_USERNAME }}/fruits-api:latest"
 
-    - name: Stop existing container (if running)
-      run: |
-        docker stop fruits-api || true
-        docker rm fruits-api || true
+      - name: Pull Docker image
+        run: docker pull ${{ secrets.DOCKERHUB_USERNAME }}/fruits-api:latest
 
-    - name: Run Docker Container on Port 8000
-      run: |
-        docker run -d --name fruits-api -p 8000:8000 \
-          ${{ secrets.DOCKERHUB_USERNAME }}/fruits-api:latest
+      - name: Show Docker images (sanity check)
+        run: docker images | grep fruits-api || echo "No image found"
+
+      - name: Stop & remove any existing container
+        run: |
+          docker stop fruits-api || true
+          docker rm fruits-api || true
+
+      - name: Run Docker container (detached mode)
+        run: |
+          set -e  # fail pipeline if docker run fails
+          docker run -d --name fruits-api -p 8000:8000 \
+            ${{ secrets.DOCKERHUB_USERNAME }}/fruits-api:latest
+
+      - name: Show running containers (confirm success)
+        run: docker ps | grep fruits-api || echo "❌ Container did not start"
+
